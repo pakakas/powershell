@@ -55,7 +55,8 @@ export async function run(args: string[], decoder?: (pap: string) => void) {
   const shell = process.platform === "win32" ? "pwsh.exe" : "pwsh";
   const useStdout = !flags.structured && !flags.ascii && !decoder;
 
-  const proc = spawn([shell, "-NoProfile", "-Command", command], {
+  const proc = spawn([shell, "-NoProfile", "-NonInteractive", "-Command", command], {
+    stdin: "ignore",
     stdout: useStdout ? "inherit" : "pipe",
     stderr: useStdout ? "inherit" : "pipe",
   });
