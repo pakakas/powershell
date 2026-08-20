@@ -56,7 +56,7 @@ export async function run(args: string[], decoder?: (pap: string) => void) {
   const useStdout = !flags.structured && !flags.ascii && !decoder;
 
   const proc = spawn([shell, "-NoProfile", "-Command", command], {
-    stdin: "ignore",
+    stdin: "inherit",
     stdout: useStdout ? "inherit" : "pipe",
     stderr: useStdout ? "inherit" : "pipe",
   });
