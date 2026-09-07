@@ -1,7 +1,6 @@
 {
   "name": "@pakakas/powershell",
   "version": "1.0.0",
-  "description": "Safe PowerShell wrapper for Pakakas ecosystem",
   "main": "powershell.ts",
   "bin": {
     "powershell": "powershell.ts"

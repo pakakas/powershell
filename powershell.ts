@@ -1,40 +1,12 @@
 import { spawn } from "bun";
-import { encode as encodeMacro } from "../src/pap.ts" with { type: 'macro' };
-import { mergeHelp } from "../src/help.ts" with { type: 'macro' };
-import { encode } from "../src/pap.ts";
 
-const papHelp = encodeMacro(mergeHelp({
-  usage: "powershell [options] [command]",
-  command_desc: "Safe PowerShell wrapper",
-  flag: ["-Command", "-L", "--ascii"],
-  desc: [
-    "Execute the specified commands",
-    "Structured output mode (MarkZero result block)",
-    "Display formatted output"
-  ]
-}));
-
-export function help(decoder?: (pap: string) => void) {
-  if (decoder) decoder(papHelp);
-  else process.stdout.write(papHelp + '\n');
+export function help() {
 }
 
-export async function run(args: string[], decoder?: (pap: string) => void) {
-  const isHumanHelp = args.includes('--h') || args.includes('--ha') || args.includes('--ah') || args.includes('-hasci') || args.includes('-hascii') || args.includes('--hasci') || args.includes('--hascii');
-
-  if (args.includes('--help') || args.includes('-h') || isHumanHelp) {
-    if (isHumanHelp && !decoder) {
-      const { mark0ToAscii } = await import('../.internal/pakakas-konsep/markzero-ascii.ts');
-      help(mark0ToAscii);
-    } else {
-      help(decoder);
-    }
-    return;
-  }
-
+export async function run(args: string[]) {
   const flags = {
     structured: args.includes("-L"),
-    ascii: args.includes('--ascii') || args.includes('--a') || isHumanHelp,
+    ascii: args.includes('--ascii') || args.includes('--a'),
   };
 
   let command = "";
@@ -74,13 +46,8 @@ export async function run(args: string[], decoder?: (pap: string) => void) {
       stderr: stderr.trim()
     };
 
-    const papData = encode([ [result] ]);
-    if (flags.ascii && !decoder) {
+    if (flags.ascii) {
       console.table([result]);
-    } else if (decoder) {
-      decoder(papData);
-    } else {
-      process.stdout.write(papData + '\n');
     }
   }
 }
